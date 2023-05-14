@@ -1,0 +1,50 @@
+{
+    "name": "valerie",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "npm run compile && npm run quickstart",
+        "quickstart": "node .",
+        "compile": "tsc -b src",
+        "clean-compile": "rm -rf dist && tsc -b src --clean && npm run compile",
+        "migrate": "npm run create-migrations && npm run apply-migrations",
+        "create-migrations": "npm run compile && cd dist && npx mikro-orm migration:create",
+        "apply-migrations": "npm run compile && cd dist && npx mikro-orm migration:up",
+        "watch": "npm run compile -- -w",
+        "test": "echo no"
+    },
+    "keywords": [],
+    "author": "Lily Wonhalf <lilywonhalf@gmail.com>",
+    "license": "ISC",
+    "imports": {
+        "#root/*": "./dist/*.js",
+        "#structures/*": "./dist/structures/*.js"
+    },
+    "dependencies": {
+        "@lilywonhalf/pretty-logger": "^2.0.2",
+        "@mikro-orm/core": "^5.7.3",
+        "@mikro-orm/migrations": "^5.7.3",
+        "@mikro-orm/mysql": "^5.7.3",
+        "@mikro-orm/reflection": "^5.7.3",
+        "@types/node-fetch": "^2.6.3",
+        "discord.js": "^14.9.0",
+        "dotenv": "^16.0.3",
+        "glob": "^8.0.3",
+        "mikro-orm": "^5.7.3",
+        "tslib": "^2.5.0"
+    },
+    "devDependencies": {
+        "@mikro-orm/cli": "^5.7.3",
+        "@types/glob": "^8.1.0",
+        "@types/node": "^18.16.2",
+        "@typescript-eslint/eslint-plugin": "^5.59.1",
+        "@typescript-eslint/parser": "^5.59.1",
+        "eslint": "^8.39.0",
+        "eslint-plugin-jsdoc": "^43.1.1",
+        "ts-node": "^10.9.1",
+        "ts-purify": "^3.0.5",
+        "typescript": "^5.0.4",
+        "typescript-eslint": "^0.0.1-alpha.0"
+    }
+}

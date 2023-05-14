@@ -1,0 +1,143 @@
+{
+  "namespaces": [],
+  "tables": [
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "comment": "Primary key, not sure what to say here.",
+          "mappedType": "integer"
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "Guild id, or server id, but in the coding realm servers are called guilds, leave me alone.",
+          "mappedType": "string"
+        },
+        "label": {
+          "name": "label",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "The task label, description, but I did not want to write description because I feel like it implies it has a title, and there is not title.",
+          "mappedType": "string"
+        },
+        "interval": {
+          "name": "interval",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "The amount of time between each reminder.",
+          "mappedType": "string"
+        },
+        "last_trigger": {
+          "name": "last_trigger",
+          "type": "datetime",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 0,
+          "comment": "The datetime of the last trigger.",
+          "mappedType": "datetime"
+        },
+        "trigger_count": {
+          "name": "trigger_count",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "How many times the trigger was triggered by the triggerer. Trigger? Is a trigger triggered by a trigger? That is weird.",
+          "mappedType": "integer"
+        },
+        "message_id": {
+          "name": "message_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "comment": "Message id. Ok yeah that does not explain much, sorry. The mod task in question is going to be posted in a message. We are talking about that message, here. This is the id of that message. Got it?",
+          "mappedType": "string"
+        }
+      },
+      "name": "mod_task",
+      "indexes": [
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    },
+    {
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "The key of the setting, snake case",
+          "mappedType": "string"
+        },
+        "guild": {
+          "name": "guild",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "The guild snowflake in which this setting applies",
+          "mappedType": "string"
+        },
+        "value": {
+          "name": "value",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "comment": "The value of the setting",
+          "mappedType": "string"
+        }
+      },
+      "name": "settings",
+      "indexes": [
+        {
+          "keyName": "PRIMARY",
+          "columnNames": [
+            "key",
+            "guild"
+          ],
+          "composite": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {}
+    }
+  ]
+}
