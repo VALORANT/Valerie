@@ -11,7 +11,8 @@ import { SettingField } from '#structures/repositories/SettingsRepository';
 
 type ChoiceName =
     'moderator-role' |
-    'mod-tasks-channel';
+    'mod-tasks-channel' |
+    'logs-channel';
 
 type MentionPrefix = '#' | '@' | '@&';
 
@@ -38,6 +39,13 @@ const SETTINGS: Record<SettingField, SettingData> = {
         title: 'Mod tasks channel',
         choice: 'mod-tasks-channel',
         description: 'The channel in which mod tasks should be sent',
+        method: 'addChannelOption',
+        mention: '#',
+    },
+    [SettingField.LogsChannel]: {
+        title: 'Logs channel',
+        choice: 'logs-channel',
+        description: 'The channel in which the logs should be sent',
         method: 'addChannelOption',
         mention: '#',
     },
