@@ -4,12 +4,16 @@ import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
 import type { MessageReaction, User } from 'discord.js';
 import EmbedBuilder from '#structures/EmbedBuilder';
+import type ModTaskRepository from '#structures/repositories/ModTaskRepository';
+import { ModTask } from '#structures/entities/ModTask';
 
 export default class MessageReactionAdd implements Listener {
     private settingsRepository: SettingsRepository;
+    private modTaskRepository: ModTaskRepository;
 
     public constructor() {
         this.settingsRepository = new Database().em.getRepository(Settings);
+        this.modTaskRepository = new Database().em.getRepository(ModTask);
     }
 
     public async run(messageReaction: MessageReaction, user: User): Promise<void> {
@@ -40,6 +44,7 @@ export default class MessageReactionAdd implements Listener {
         const [taskEmbed] = message.embeds;
 
         await message.delete();
+        await this.modTaskRepository.updateTriggerByMessageId(message.id);
 
         if (logsChannel && logsChannel.isTextBased() && taskEmbed) {
             await logsChannel.send({ embeds: [

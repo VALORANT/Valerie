@@ -34,6 +34,7 @@ export class ModTask {
 
     public async postTask(channel: TextBasedChannel): Promise<ModTask> {
         this.triggerCount = 1;
+        this.lastTrigger = new Date();
 
         const embed = ModTask.getTaskEmbed(this);
         const message = await channel.send({ embeds: [embed] });
@@ -48,6 +49,7 @@ export class ModTask {
 
     public async updateTask(message: Message): Promise<ModTask> {
         this.triggerCount++;
+        this.lastTrigger = new Date();
 
         if (this.triggerCount > 3) {
             return this;
