@@ -25,13 +25,13 @@
         },
         "label": {
           "name": "label",
-          "type": "varchar(255)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "comment": "The task label, description, but I did not want to write description because I feel like it implies it has a title, and there is not title.",
-          "mappedType": "string"
+          "mappedType": "text"
         },
         "interval": {
           "name": "interval",
@@ -61,6 +61,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "1",
           "comment": "How many times the trigger was triggered by the triggerer. Trigger? Is a trigger triggered by a trigger? That is weird.",
           "mappedType": "integer"
         },

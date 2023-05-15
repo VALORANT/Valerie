@@ -17,7 +17,7 @@ export class ModTask {
     @Property({ comment: 'Guild id, or server id, but in the coding realm servers are called guilds, leave me alone.' })
     guild!: string;
 
-    @Property({ comment: 'The task label, description, but I did not want to write description because I feel like it implies it has a title, and there is not title.' })
+    @Property({ columnType: 'text', comment: 'The task label, description, but I did not want to write description because I feel like it implies it has a title, and there is not title.' })
     label!: string;
 
     @Property({ comment: 'The amount of time between each reminder.' })
@@ -26,7 +26,7 @@ export class ModTask {
     @Property({ onCreate: () => new Date(), comment: 'The datetime of the last trigger.' })
     lastTrigger?: Date;
 
-    @Property({ onCreate: () => 1, comment: 'How many times the trigger was triggered by the triggerer. Trigger? Is a trigger triggered by a trigger? That is weird.' })
+    @Property({ default: 1, comment: 'How many times the trigger was triggered by the triggerer. Trigger? Is a trigger triggered by a trigger? That is weird.' })
     triggerCount!: number;
 
     @Property({ nullable: true, comment: 'Message id. Ok yeah that does not explain much, sorry. The mod task in question is going to be posted in a message. We are talking about that message, here. This is the id of that message. Got it?' })
