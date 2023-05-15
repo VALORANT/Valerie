@@ -13,9 +13,15 @@ export default class MessageReactionAdd implements Listener {
     }
 
     public async run(messageReaction: MessageReaction, user: User): Promise<void> {
-        const { client, message } = messageReaction;
+        if (messageReaction.partial) {
+            await messageReaction.fetch();
+        }
 
-        if (user.id === client.user.id || !message?.guildId || !client.guilds.cache.has(message?.guildId)) {
+        const { client, message } = messageReaction;
+        const isInGuild = message?.guildId && client.guilds.cache.has(message?.guildId);
+        const shouldListen = !user.bot && message.author?.id === client.user.id
+
+        if (!shouldListen || !isInGuild) {
             return;
         }
 
