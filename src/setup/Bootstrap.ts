@@ -30,6 +30,8 @@ export class Bootstrap {
             configureEnvironment();
         }
 
+        process.env.TZ = 'UTC+0';
+
         Bootstrap.instance = this;
     }
 
