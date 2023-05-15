@@ -26,8 +26,15 @@ export default class ModerationTaskLoop {
     public async run(client: Client) {
         const tasks = await this.modTaskRepository.findAll();
 
+        console.log(Date.now());
+
         for(const task of tasks) {
             const interval = stringToTime(task.interval)!;
+
+            console.log(task.lastTrigger!.getTime());
+            console.log(interval);
+            console.log(task.lastTrigger!.getTime() + interval);
+            console.log(Date.now() < task.lastTrigger!.getTime() + interval);
 
             if (Date.now() < task.lastTrigger!.getTime() + interval) {
                 continue;
