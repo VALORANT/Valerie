@@ -34,7 +34,7 @@ export default class NudgeCommand extends Command {
         const messageLink = interaction.options.getString('message-link', true);
         const messageLinkRegex = /^https:\/\/([^.]+\.)?discord.com\/channels\/\d{16,19}\/\d{16,19}\/\d{16,19}$/iu;
         const embed = new EmbedBuilder()
-            .setAuthor({ iconURL: guild.iconURL() ?? undefined, name: `A message from the moderation team` })
+            .setAuthor({ iconURL: guild.iconURL() ?? undefined, name: `The moderation team` })
             .setDescription(`
                 **A message you posted in the ${guild.name} server has caught the attention of moderators.**
 
