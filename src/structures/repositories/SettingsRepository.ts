@@ -4,7 +4,6 @@ import type { Snowflake } from 'discord.js';
 import { MINUTE } from '#root/util/DateTime';
 
 export enum SettingField {
-    ModeratorRole = 'moderator_role',
     ModTasksChannel = 'mod_tasks_channel',
     LogsChannel = 'logs_channel'
 }

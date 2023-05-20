@@ -3,8 +3,14 @@ import { SlashCommandBuilder } from 'discord.js';
 import Command from '#structures/Command';
 import InteractionUtil from '#root/util/InteractionUtil';
 import EmbedBuilder from '#structures/EmbedBuilder';
+import { SettingField } from '#structures/repositories/SettingsRepository';
+import type SettingsRepository from '#structures/repositories/SettingsRepository';
+import Database from '#root/setup/Database';
+import { Settings } from '#structures/entities/Settings';
 
 export default class NudgeCommand extends Command {
+    private settingsRepository: SettingsRepository;
+
     public constructor() {
         super(
             new SlashCommandBuilder()
@@ -23,6 +29,8 @@ export default class NudgeCommand extends Command {
                     .setRequired(true)
                 )
         );
+
+        this.settingsRepository = new Database().em.getRepository(Settings);
     }
 
     public async run(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -33,6 +41,8 @@ export default class NudgeCommand extends Command {
         const member = await guild.members.fetch(user.id).catch(() => null);
         const messageLink = interaction.options.getString('message-link', true);
         const messageLinkRegex = /^https:\/\/([^.]+\.)?discord.com\/channels\/\d{16,19}\/\d{16,19}\/\d{16,19}$/iu;
+        const logsChannelId = await this.settingsRepository.getGuildSetting(guild.id, SettingField.LogsChannel);
+        const logsChannel = logsChannelId ? guild.channels.cache.get(logsChannelId) : null;
         const embed = new EmbedBuilder()
             .setAuthor({ iconURL: guild.iconURL() ?? undefined, name: `The moderation team` })
             .setDescription(`
@@ -60,6 +70,14 @@ export default class NudgeCommand extends Command {
             }, true);
 
             return;
+        }
+
+        if (logsChannel && logsChannel.isTextBased()) {
+            await logsChannel.send({ embeds: [
+                new EmbedBuilder()
+                    .setTitle(`Nudge sent`)
+                    .setDescription(`**Member** ${member.user.tag} ${member}\n\n**Message:** ${messageLink}`),
+            ] });
         }
 
         await member.send({ embeds: [embed] }).then(() => {

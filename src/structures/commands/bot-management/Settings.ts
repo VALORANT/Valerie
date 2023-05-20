@@ -10,7 +10,6 @@ import type SettingsRepository from '#structures/repositories/SettingsRepository
 import { SettingField } from '#structures/repositories/SettingsRepository';
 
 type ChoiceName =
-    'moderator-role' |
     'mod-tasks-channel' |
     'logs-channel';
 
@@ -28,13 +27,6 @@ type SettingData = {
 }
 
 const SETTINGS: Record<SettingField, SettingData> = {
-    [SettingField.ModeratorRole]: {
-        title: 'Moderator role',
-        choice: 'moderator-role',
-        description: 'The role wore by the people who will moderate the voicechats',
-        method: 'addRoleOption',
-        mention: '@&',
-    },
     [SettingField.ModTasksChannel]: {
         title: 'Mod tasks channel',
         choice: 'mod-tasks-channel',
