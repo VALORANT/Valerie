@@ -4,11 +4,15 @@ import type {
     SlashCommandOptionsOnlyBuilder,
     SlashCommandSubcommandsOnlyBuilder,
     ContextMenuCommandBuilder,
-    ContextMenuCommandInteraction
+    ContextMenuCommandInteraction,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction
 } from 'discord.js';
 
 export type SlashCommandData = SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | SlashCommandOptionsOnlyBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
-export type MultipleInteractionCommand = ChatInputCommandInteraction | ContextMenuCommandInteraction;
+export type MultipleInteractionCommand = ChatInputCommandInteraction
+    | UserContextMenuCommandInteraction
+    | MessageContextMenuCommandInteraction;
 
 export default abstract class Command {
     private readonly _slashCommandBuilder: SlashCommandData;
