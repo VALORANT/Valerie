@@ -76,7 +76,7 @@ export default class NudgeCommand extends Command {
             await logsChannel.send({ embeds: [
                 new EmbedBuilder()
                     .setTitle(`Nudge sent`)
-                    .setDescription(`**Member** ${member.user.tag} ${member}\n\n**Message:** ${messageLink}`),
+                    .setDescription(`**Member** ${member.user.tag} ${member}\n**Message:** ${messageLink}`),
             ] });
         }
 
