@@ -18,7 +18,11 @@ export default class MessageReactionAdd implements Listener {
 
     public async run(messageReaction: MessageReaction, user: User): Promise<void> {
         if (messageReaction.partial) {
-            await messageReaction.fetch();
+            const result = await messageReaction.fetch().catch(() => null);
+
+            if (!result) {
+                return;
+            }
         }
 
         const { client, message } = messageReaction;
