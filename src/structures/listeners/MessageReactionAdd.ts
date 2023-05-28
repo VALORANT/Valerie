@@ -27,7 +27,7 @@ export default class MessageReactionAdd implements Listener {
 
         const { client, message } = messageReaction;
         const isInGuild = message?.guildId && client.guilds.cache.has(message?.guildId);
-        const shouldListen = !user.bot && message.author?.id === client.user.id
+        const shouldListen = !user.bot && message.author?.id === client.user.id;
 
         if (!shouldListen || !isInGuild) {
             return;

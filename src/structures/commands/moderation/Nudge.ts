@@ -88,7 +88,7 @@ export default class NudgeCommand extends Command {
 
                 While this is not a violation, please be mindful of our rules and help us in keeping this community safe and welcome!
 
-                [Click here to go to your message](${messageLink}).
+                [Click here to go to your message.](${messageLink})
             `)
             .setColor(0xff942a);
 
