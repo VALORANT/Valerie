@@ -14,7 +14,8 @@ type ChoiceName =
     'logs-channel' |
     'emergency-role' |
     'vc-mod-role' |
-    'emergency-channel';
+    'emergency-channel' |
+    'modmail-bot';
 
 type MentionPrefix = '#' | '@' | '@&';
 
@@ -64,6 +65,13 @@ const SETTINGS: Record<SettingField, SettingData> = {
         description: 'The channel in which to send the message in case of emergency',
         method: 'addChannelOption',
         mention: '#',
+    },
+    [SettingField.ModmailBot]: {
+        title: 'Modmail bot',
+        choice: 'modmail-bot',
+        description: 'The modmail bot Discord account',
+        method: 'addUserOption',
+        mention: '@',
     },
 };
 

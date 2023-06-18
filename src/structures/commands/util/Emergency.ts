@@ -178,6 +178,11 @@ export default class EmergencyCommand extends Command {
         let emergencyInfoMessage = `\`\`\`md\nHello. I would like to report a user.\n` +
             `**Reason:** [Explain the reason of your report here]\n` +
             `**Reported user:** ${userName}`;
+        const modmailBotId = await this.settingsRepository.getGuildSetting(
+            interaction.guild!.id,
+            SettingField.ModmailBot
+        );
+        const modmailMention = modmailBotId ? `<@${modmailBotId}>` : `Modmail`;
 
         if (message) {
             emergencyInfoMessage = `${emergencyInfoMessage}\n**Reported message:** ${message.url}`;
@@ -187,7 +192,7 @@ export default class EmergencyCommand extends Command {
 
         await InteractionUtil.reply(interaction, {
             title: `Please report this using Modmail`,
-            description: `We take reports very seriously. Please send us this report through the Modmail bot.\n` +
+            description: `We take reports very seriously. Please send us this report through the ${modmailMention} bot.\n` +
                 `To do so, simply send a direct message to the bot like you would any other user.\n` +
                 `Make sure to include this information with your report:\n\n${emergencyInfoMessage}`,
         });

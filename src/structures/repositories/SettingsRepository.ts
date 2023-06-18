@@ -8,7 +8,8 @@ export enum SettingField {
     LogsChannel = 'logs_channel',
     VCModRole = 'vc_mod_role',
     EmergencyRole = 'emergency_role',
-    EmergencyChannel = 'emergency_channel'
+    EmergencyChannel = 'emergency_channel',
+    ModmailBot = 'modmail_bot'
 }
 
 const formatters: Partial<Record<SettingField, (status: string) => string | null>> = {
