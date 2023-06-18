@@ -145,7 +145,7 @@ export default class EmergencyCommand extends Command {
         );
         const emergencyChannel = guild!.channels.cache.get(emergencyChannelId!) as TextBasedChannel;
         const emergencyInfoMessage: MessageCreateOptions = {
-            content: `**🚨 <@&${emergencyRoleId}> The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**\n` +
+            content: `**🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**\n` +
                 `**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}\n` +
                 `**Reported user:** ${userName}\n` +
                 `**Channel:** <#${interaction.channel!.id}>`,
@@ -156,6 +156,8 @@ export default class EmergencyCommand extends Command {
         }
 
         await emergencyChannel.send(emergencyInfoMessage);
+
+        emergencyInfoMessage.content = `<@&${emergencyRoleId}>\n${emergencyInfoMessage.content}`;
 
         if (message) {
             emergencyInfoMessage.reply = { messageReference: message, failIfNotExists: false };
