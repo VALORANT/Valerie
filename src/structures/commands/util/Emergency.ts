@@ -146,11 +146,11 @@ export default class EmergencyCommand extends Command {
             SettingField.EmergencyChannel
         );
         const emergencyChannel = guild!.channels.cache.get(emergencyChannelId!) as TextBasedChannel;
-        const emergencyPingMessage: MessageCreateOptions = { content: `🚨 <@&${emergencyRoleId}> **there is an emergency!**` };
         const emergencyInfoMessage: MessageCreateOptions = {
-            content: `## 🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})\n` +
+            content: `**🚨 <@&${emergencyRoleId}> The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**\n` +
                 `**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}\n` +
-                `**Reported user:** ${userName}`,
+                `**Reported user:** ${userName}` +
+                `**Channel:** <#${interaction.channel!.id}>`,
         };
 
         if (message) {
@@ -166,12 +166,15 @@ export default class EmergencyCommand extends Command {
                 },
                 description: message.content,
             })];
-
-            emergencyPingMessage.reply = { messageReference: message, failIfNotExists: false };
         }
 
         await emergencyChannel.send(emergencyInfoMessage);
-        await interaction.channel!.send(emergencyPingMessage);
+
+        if (message) {
+            emergencyInfoMessage.reply = { messageReference: message, failIfNotExists: false };
+        }
+
+        await interaction.channel!.send(emergencyInfoMessage);
 
         await InteractionUtil.reply(interaction, {
             title: 'Emergency team pinged',
@@ -187,8 +190,8 @@ export default class EmergencyCommand extends Command {
         const member = await interaction.guild!.members.fetch(user.id).catch(() => null);
         const userName = `${member ? `${member.displayName}, ` : ''}${user.tag}, ${user.id}`;
         let emergencyInfoMessage = `\`\`\`md\nHello. I would like to report a user.\n` +
-                `**Reason:** [Explain the reason of your report here]\n` +
-                `**Reported user:** ${userName}`;
+            `**Reason:** [Explain the reason of your report here]\n` +
+            `**Reported user:** ${userName}`;
 
         if (message) {
             emergencyInfoMessage = `${emergencyInfoMessage}\n**Reported message:** ${message.url}`;
