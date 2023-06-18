@@ -12,7 +12,6 @@ import type SettingsRepository from '#structures/repositories/SettingsRepository
 import { SettingField } from '#structures/repositories/SettingsRepository';
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
-import EmbedBuilder from '#structures/EmbedBuilder';
 import type { GuildMessage } from '#structures/types/Message';
 
 type EmergencyReasonKey = 'hate' | 'spam' | 'nsfw' | 'vctroll';
