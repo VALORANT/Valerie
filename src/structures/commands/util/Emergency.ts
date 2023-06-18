@@ -139,8 +139,7 @@ export default class EmergencyCommand extends Command {
     ): Promise<void> {
         const { guild } = interaction;
         const pinger = interaction.user;
-        const member = await guild!.members.fetch(user.id).catch(() => null);
-        const userName = `${member ? `${member.displayName}, ` : ''}${user.tag}, ${user.id}`;
+        const userName = `${user.tag}, ${user.id}`;
         const emergencyChannelId = await this.settingsRepository.getGuildSetting(
             guild!.id,
             SettingField.EmergencyChannel
@@ -154,18 +153,7 @@ export default class EmergencyCommand extends Command {
         };
 
         if (message) {
-            const messageMember = await guild!.members.fetch(message.author.id).catch(() => null);
-            const messageUserName = `${messageMember ? `${messageMember.displayName}, ` : ''}${message.author.tag}, ${message.author.id}`;
-
             emergencyInfoMessage.content = `${emergencyInfoMessage.content}\n**Reported message:** ${message.url}`;
-
-            emergencyInfoMessage.embeds = [new EmbedBuilder(false, {
-                author: {
-                    iconURL: (messageMember ?? message.author).displayAvatarURL(),
-                    name: `${messageUserName}`,
-                },
-                description: message.content,
-            })];
         }
 
         await emergencyChannel.send(emergencyInfoMessage);
@@ -187,8 +175,7 @@ export default class EmergencyCommand extends Command {
         user: User,
         message: GuildMessage | null
     ): Promise<void> {
-        const member = await interaction.guild!.members.fetch(user.id).catch(() => null);
-        const userName = `${member ? `${member.displayName}, ` : ''}${user.tag}, ${user.id}`;
+        const userName = `${user.tag}, ${user.id}`;
         let emergencyInfoMessage = `\`\`\`md\nHello. I would like to report a user.\n` +
             `**Reason:** [Explain the reason of your report here]\n` +
             `**Reported user:** ${userName}`;
