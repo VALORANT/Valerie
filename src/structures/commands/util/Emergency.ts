@@ -149,7 +149,7 @@ export default class EmergencyCommand extends Command {
         const emergencyInfoMessage: MessageCreateOptions = {
             content: `**🚨 <@&${emergencyRoleId}> The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**\n` +
                 `**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}\n` +
-                `**Reported user:** ${userName}` +
+                `**Reported user:** ${userName}\n` +
                 `**Channel:** <#${interaction.channel!.id}>`,
         };
 
