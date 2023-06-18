@@ -1,6 +1,6 @@
 import type { ChatInputCommandInteraction, TextBasedChannel } from 'discord.js';
 import { ContextMenuCommandBuilder, SlashCommandBuilder, ApplicationCommandType } from 'discord.js';
-import type { Message, MessageContextMenuCommandInteraction, Guild, Snowflake } from 'discord.js';
+import type { MessageContextMenuCommandInteraction } from 'discord.js';
 import Command from '#structures/Command';
 import type { MultipleInteractionCommand } from '#structures/Command';
 import InteractionUtil from '#root/util/InteractionUtil';
@@ -9,8 +9,7 @@ import { SettingField } from '#structures/repositories/SettingsRepository';
 import type SettingsRepository from '#structures/repositories/SettingsRepository';
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
-
-type GuildMessage = Message & { guild: Guild, guildId: Snowflake };
+import type { GuildMessage } from '#structures/types/Message';
 
 export default class NudgeCommand extends Command {
     private settingsRepository: SettingsRepository;

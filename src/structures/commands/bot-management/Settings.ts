@@ -11,7 +11,10 @@ import { SettingField } from '#structures/repositories/SettingsRepository';
 
 type ChoiceName =
     'mod-tasks-channel' |
-    'logs-channel';
+    'logs-channel' |
+    'emergency-role' |
+    'vc-mod-role' |
+    'emergency-channel';
 
 type MentionPrefix = '#' | '@' | '@&';
 
@@ -38,6 +41,27 @@ const SETTINGS: Record<SettingField, SettingData> = {
         title: 'Logs channel',
         choice: 'logs-channel',
         description: 'The channel in which the logs should be sent',
+        method: 'addChannelOption',
+        mention: '#',
+    },
+    [SettingField.VCModRole]: {
+        title: 'Voicechat moderators role',
+        choice: 'vc-mod-role',
+        description: 'The role to ping in case of voicechat emergency',
+        method: 'addRoleOption',
+        mention: '@&',
+    },
+    [SettingField.EmergencyRole]: {
+        title: 'Emergency role',
+        choice: 'emergency-role',
+        description: 'The role to ping in case of general emergency',
+        method: 'addRoleOption',
+        mention: '@&',
+    },
+    [SettingField.EmergencyChannel]: {
+        title: 'Emergency channel',
+        choice: 'emergency-channel',
+        description: 'The channel in which to send the message in case of emergency',
         method: 'addChannelOption',
         mention: '#',
     },

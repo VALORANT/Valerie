@@ -5,7 +5,10 @@ import { MINUTE } from '#root/util/DateTime';
 
 export enum SettingField {
     ModTasksChannel = 'mod_tasks_channel',
-    LogsChannel = 'logs_channel'
+    LogsChannel = 'logs_channel',
+    VCModRole = 'vc_mod_role',
+    EmergencyRole = 'emergency_role',
+    EmergencyChannel = 'emergency_channel'
 }
 
 const formatters: Partial<Record<SettingField, (status: string) => string | null>> = {
