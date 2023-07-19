@@ -102,7 +102,7 @@ export default class EmergencyCommand extends Command {
     private async doRun(
         interaction: MultipleInteractionCommand,
         reason: string,
-        user: User | null,
+        user: User | undefined,
         message: GuildMessage | null
     ): Promise<void> {
         const { guild } = interaction;
@@ -123,7 +123,7 @@ export default class EmergencyCommand extends Command {
     private async pingEmergency(
         interaction: MultipleInteractionCommand,
         reason: string,
-        user: User | null,
+        user: User | undefined,
         emergencyRoleId: Snowflake,
         message: GuildMessage | null
     ): Promise<void> {
@@ -168,7 +168,7 @@ export default class EmergencyCommand extends Command {
 
     private async encourageModmailDM(
         interaction: MultipleInteractionCommand,
-        user: User,
+        user: User | undefined,
         message: GuildMessage | null
     ): Promise<void> {
         const userName = user ? `${user.tag}, ${user.id}` : null;
