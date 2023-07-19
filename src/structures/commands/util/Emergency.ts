@@ -130,17 +130,19 @@ export default class EmergencyCommand extends Command {
         const { guild } = interaction;
         const pinger = interaction.user;
         const userName = user ? `${user}, ${user.tag}, ${user.id}` : null;
+        const banCommand = `\`?ban ${user ? user.id : 'userid'} ${reason}\``;
         const emergencyChannelId = await this.settingsRepository.getGuildSetting(
             guild!.id,
             SettingField.EmergencyChannel
         );
         const emergencyChannel = guild!.channels.cache.get(emergencyChannelId!) as TextBasedChannel;
         const emergencyInfoMessage: MessageCreateOptions = {
-            content: `**🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**\n` +
-                `**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}\n` +
-                (user ? `**Reported user:** ${userName}\n` : '') +
-                `**Channel:** <#${interaction.channel!.id}>\n` +
-                (message ? `**Reported message:** ${message.url}` : ''),
+            content: `**🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**` +
+                `\n**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}` +
+                (user ? `\n**Reported user:** ${userName}` : '') +
+                `\n**Channel:** <#${interaction.channel!.id}>` +
+                (message ? `\n**Reported message:** ${message.url}` : '') +
+                `\n\n**Suggested ban command:** ${banCommand}`,
         };
 
         if (message) {
@@ -151,13 +153,12 @@ export default class EmergencyCommand extends Command {
 
         const emergencyMessage = await interaction.channel!.send(emergencyInfoMessage);
         const emergencyInfoMessageLines = emergencyInfoMessage.content.split('\n');
-        const banCommand = `\`?ban ${user ? user.id : 'userid'} ${reason}\``;
 
         delete emergencyInfoMessage.reply;
 
         emergencyInfoMessageLines.shift();
         emergencyInfoMessageLines.unshift(emergencyMessage.url);
-        emergencyInfoMessage.content = `${emergencyInfoMessageLines.join('\n')}\n\n**Suggested ban command:** ${banCommand}`;
+        emergencyInfoMessage.content = emergencyInfoMessageLines.join('\n');
 
         await emergencyChannel.send(emergencyInfoMessage);
 
