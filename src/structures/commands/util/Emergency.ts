@@ -96,22 +96,13 @@ export default class EmergencyCommand extends Command {
 
         const user = interaction.options.getUser('user') ?? message?.author;
 
-        if (!user) {
-            await InteractionUtil.reply(interaction, {
-                title: 'Error',
-                description: 'You need to either report a message link or a user.',
-            }, true);
-
-            return;
-        }
-
         return this.doRun(interaction, interaction.options.getString('reason', true), user, message);
     }
 
     private async doRun(
         interaction: MultipleInteractionCommand,
         reason: string,
-        user: User,
+        user: User | null,
         message: GuildMessage | null
     ): Promise<void> {
         const { guild } = interaction;
@@ -132,13 +123,13 @@ export default class EmergencyCommand extends Command {
     private async pingEmergency(
         interaction: MultipleInteractionCommand,
         reason: string,
-        user: User,
+        user: User | null,
         emergencyRoleId: Snowflake,
         message: GuildMessage | null
     ): Promise<void> {
         const { guild } = interaction;
         const pinger = interaction.user;
-        const userName = `${user}, ${user.tag}, ${user.id}`;
+        const userName = user ? `${user}, ${user.tag}, ${user.id}` : null;
         const emergencyChannelId = await this.settingsRepository.getGuildSetting(
             guild!.id,
             SettingField.EmergencyChannel
@@ -147,23 +138,27 @@ export default class EmergencyCommand extends Command {
         const emergencyInfoMessage: MessageCreateOptions = {
             content: `**🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**\n` +
                 `**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}\n` +
-                `**Reported user:** ${userName}\n` +
-                `**Channel:** <#${interaction.channel!.id}>`,
+                (user ? `**Reported user:** ${userName}\n` : '') +
+                `**Channel:** <#${interaction.channel!.id}>\n` +
+                (message ? `**Reported message:** ${message.url}` : ''),
         };
-
-        if (message) {
-            emergencyInfoMessage.content = `${emergencyInfoMessage.content}\n**Reported message:** ${message.url}`;
-        }
-
-        const emergencyMessage = await emergencyChannel.send(emergencyInfoMessage);
-
-        emergencyInfoMessage.content = `<@&${emergencyRoleId}> ${emergencyMessage.url}\n${emergencyInfoMessage.content}`;
 
         if (message) {
             emergencyInfoMessage.reply = { messageReference: message, failIfNotExists: false };
         }
 
-        await interaction.channel!.send(emergencyInfoMessage);
+        emergencyInfoMessage.content = `<@&${emergencyRoleId}>\n${emergencyInfoMessage.content}`;
+
+        const emergencyMessage = await interaction.channel!.send(emergencyInfoMessage);
+        const emergencyInfoMessageLines = emergencyInfoMessage.content.split('\n');
+
+        delete emergencyInfoMessage.reply;
+
+        emergencyInfoMessageLines.shift();
+        emergencyInfoMessageLines.unshift(emergencyMessage.url);
+        emergencyInfoMessage.content = emergencyInfoMessageLines.join('\n')
+
+        await emergencyChannel.send(emergencyInfoMessage);
 
         await InteractionUtil.reply(interaction, {
             title: 'Emergency team pinged',
@@ -176,10 +171,10 @@ export default class EmergencyCommand extends Command {
         user: User,
         message: GuildMessage | null
     ): Promise<void> {
-        const userName = `${user.tag}, ${user.id}`;
+        const userName = user ? `${user.tag}, ${user.id}` : null;
         let emergencyInfoMessage = `\`\`\`md\nHello. I would like to report a user.\n` +
             `**Reason:** [Explain the reason of your report here]\n` +
-            `**Reported user:** ${userName}`;
+            (user ? `**Reported user:** ${userName}` : '');
         const modmailBotId = await this.settingsRepository.getGuildSetting(
             interaction.guild!.id,
             SettingField.ModmailBot
