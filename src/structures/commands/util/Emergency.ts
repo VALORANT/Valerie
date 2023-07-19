@@ -151,12 +151,13 @@ export default class EmergencyCommand extends Command {
 
         const emergencyMessage = await interaction.channel!.send(emergencyInfoMessage);
         const emergencyInfoMessageLines = emergencyInfoMessage.content.split('\n');
+        const banCommand = `\`?ban ${user ? user.id : 'userid'} ${reason}\``;
 
         delete emergencyInfoMessage.reply;
 
         emergencyInfoMessageLines.shift();
         emergencyInfoMessageLines.unshift(emergencyMessage.url);
-        emergencyInfoMessage.content = emergencyInfoMessageLines.join('\n')
+        emergencyInfoMessage.content = `${emergencyInfoMessageLines.join('\n')}\n\n**Suggested ban command:** ${banCommand}`;
 
         await emergencyChannel.send(emergencyInfoMessage);
 
