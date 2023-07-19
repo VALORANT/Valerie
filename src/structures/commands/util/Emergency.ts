@@ -138,7 +138,7 @@ export default class EmergencyCommand extends Command {
     ): Promise<void> {
         const { guild } = interaction;
         const pinger = interaction.user;
-        const userName = `${user.tag}, ${user.id}`;
+        const userName = `${user}, ${user.tag}, ${user.id}`;
         const emergencyChannelId = await this.settingsRepository.getGuildSetting(
             guild!.id,
             SettingField.EmergencyChannel
@@ -155,9 +155,9 @@ export default class EmergencyCommand extends Command {
             emergencyInfoMessage.content = `${emergencyInfoMessage.content}\n**Reported message:** ${message.url}`;
         }
 
-        await emergencyChannel.send(emergencyInfoMessage);
+        const emergencyMessage = await emergencyChannel.send(emergencyInfoMessage);
 
-        emergencyInfoMessage.content = `<@&${emergencyRoleId}>\n${emergencyInfoMessage.content}`;
+        emergencyInfoMessage.content = `<@&${emergencyRoleId}> ${emergencyMessage.url}\n${emergencyInfoMessage.content}`;
 
         if (message) {
             emergencyInfoMessage.reply = { messageReference: message, failIfNotExists: false };
