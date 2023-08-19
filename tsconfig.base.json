@@ -28,6 +28,7 @@
         "target": "ESNext",
         "lib": ["DOM"],
         "noImplicitAny": true,
+        "noImplicitOverride": true,
         "removeComments": true
     }
 }

@@ -1,33 +1,10 @@
-import { ChatInputCommandInteraction, GuildBasedChannel, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, GuildBasedChannel } from 'discord.js';
 import Logger from '@lilywonhalf/pretty-logger';
-import Command from '#structures/Command';
+import { Command } from '@sapphire/framework';
 import EmbedBuilder from '#structures/EmbedBuilder';
 
-export default class EvalCommand extends Command {
-    public constructor() {
-        super(
-            new SlashCommandBuilder()
-                .setName('post')
-                .setDefaultMemberPermissions(0)
-                .setDMPermission(false)
-                .setDescription('You can make me post messages in a text chat!')
-                .addStringOption(builder => builder
-                    .setName('message')
-                    .setDescription('The message you want me to post')
-                    .setRequired(true)
-                )
-                .addChannelOption(builder => builder
-                    .setName('channel')
-                    .setDescription('The channel in which to post the message')
-                )
-                .addStringOption(builder => builder
-                    .setName('reply-to')
-                    .setDescription('The message ID to reply to')
-                )
-        );
-    }
-
-    public async run(interaction: ChatInputCommandInteraction): Promise<void> {
+export default class extends Command {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.deferReply({ ephemeral: true });
 
         if (interaction.user.id !== process.env.OWNER) {
@@ -106,6 +83,29 @@ export default class EvalCommand extends Command {
             .setDescription('The message has been posted');
 
         await interaction.editReply({ embeds: [embed] });
+    }
+
+    public override registerApplicationCommands(registry: Command.Registry) {
+        registry.registerChatInputCommand(command =>
+            command
+                .setName('post')
+                .setDefaultMemberPermissions(0)
+                .setDMPermission(false)
+                .setDescription('You can make me post messages in a text chat!')
+                .addStringOption(builder => builder
+                    .setName('message')
+                    .setDescription('The message you want me to post')
+                    .setRequired(true)
+                )
+                .addChannelOption(builder => builder
+                    .setName('channel')
+                    .setDescription('The channel in which to post the message')
+                )
+                .addStringOption(builder => builder
+                    .setName('reply-to')
+                    .setDescription('The message ID to reply to')
+                )
+        );
     }
 
     private async sendInvalidMessageIdError(interaction: ChatInputCommandInteraction): Promise<void> {

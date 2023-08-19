@@ -1,8 +1,8 @@
-import { SlashCommandBuilder } from 'discord.js';
 import type { ChatInputCommandInteraction, SharedSlashCommandOptions } from 'discord.js';
 import { wrap } from '@mikro-orm/core';
 import Logger from '@lilywonhalf/pretty-logger';
-import Command from '#structures/Command';
+import { AliasPiece, Command } from '@sapphire/framework';
+import type { CommandOptions } from '@sapphire/framework';
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
 import EmbedBuilder from '#structures/EmbedBuilder';
@@ -87,12 +87,26 @@ const CHOICE_MAP: Record<ChoiceName, SettingField> = Object.keys(SETTINGS).reduc
     {} as Record<ChoiceName, SettingField>
 );
 
-export default class SettingsCommand extends Command {
+export default class extends Command {
     private settingsRepository: SettingsRepository;
 
-    public constructor() {
-        super(
-            new SlashCommandBuilder()
+    public constructor(context: AliasPiece.Context, options: CommandOptions) {
+        super(context, options);
+
+        this.settingsRepository = new Database().em.getRepository(Settings);
+    }
+
+    public override async chatInputRun(interaction: ChatInputCommandInteraction): Promise<void> {
+        if (interaction.options.getSubcommand() === 'view') {
+            await this.runView(interaction).catch(Logger.exception);
+        } else {
+            await this.runEdit(interaction).catch(Logger.exception);
+        }
+    }
+
+    public override registerApplicationCommands(registry: Command.Registry) {
+        registry.registerChatInputCommand(command =>
+            command
                 .setName('settings')
                 .setDMPermission(false)
                 .setDefaultMemberPermissions(0)
@@ -128,16 +142,6 @@ export default class SettingsCommand extends Command {
                     return subcommand;
                 })
         );
-
-        this.settingsRepository = new Database().em.getRepository(Settings);
-    }
-
-    public async run(interaction: ChatInputCommandInteraction): Promise<void> {
-        if (interaction.options.getSubcommand() === 'view') {
-            await this.runView(interaction).catch(Logger.exception);
-        } else {
-            await this.runEdit(interaction).catch(Logger.exception);
-        }
     }
 
     private async runView(interaction: ChatInputCommandInteraction): Promise<void> {

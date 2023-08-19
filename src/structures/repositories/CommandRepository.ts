@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import type Command from '#structures/Command';
+import { Command } from '@sapphire/framework';
 import FileSystem from '#root/util/FileSystem';
 import type Repository from '#structures/Repository';
 

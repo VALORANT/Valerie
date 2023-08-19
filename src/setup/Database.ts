@@ -2,6 +2,7 @@ import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import type { MySqlDriver } from '@mikro-orm/mysql';
 import Logger from '@lilywonhalf/pretty-logger';
+import { MigrationGenerator } from '#structures/MigrationGenerator';
 
 export default class Database {
     private static instance: Database;
@@ -36,6 +37,7 @@ export default class Database {
                 collate: 'utf8mb4_general_ci',
             },
             migrations: {
+                generator: MigrationGenerator,
                 path: './dist/migrations',
                 pathTs: './src/migrations',
             },

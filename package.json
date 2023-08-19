@@ -27,8 +27,16 @@
         "@mikro-orm/migrations": "^5.7.3",
         "@mikro-orm/mysql": "^5.7.3",
         "@mikro-orm/reflection": "^5.7.3",
+        "@sapphire/decorators": "^6.0.2",
+        "@sapphire/discord.js-utilities": "^7.0.1",
+        "@sapphire/framework": "^4.5.1",
+        "@sapphire/plugin-logger": "^3.0.5",
+        "@sapphire/plugin-subcommands": "^4.0.2",
+        "@sapphire/time-utilities": "^1.7.10",
+        "@sapphire/type": "^2.4.0",
+        "@sapphire/utilities": "^3.13.0",
         "@types/node-fetch": "^2.6.3",
-        "discord.js": "^14.9.0",
+        "discord.js": "^14.13.0",
         "dotenv": "^16.0.3",
         "glob": "^8.0.3",
         "mikro-orm": "^5.7.3",
@@ -36,6 +44,8 @@
     },
     "devDependencies": {
         "@mikro-orm/cli": "^5.7.3",
+        "@sapphire/eslint-config": "^5.0.1",
+        "@sapphire/ts-config": "^4.0.1",
         "@types/glob": "^8.1.0",
         "@types/node": "^18.16.2",
         "@typescript-eslint/eslint-plugin": "^5.59.1",
@@ -44,7 +54,7 @@
         "eslint-plugin-jsdoc": "^43.1.1",
         "ts-node": "^10.9.1",
         "ts-purify": "^3.0.5",
-        "typescript": "^5.0.4",
+        "typescript": "^5.1.6",
         "typescript-eslint": "^0.0.1-alpha.0"
     }
 }

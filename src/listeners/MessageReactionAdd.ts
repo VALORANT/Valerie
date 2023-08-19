@@ -1,4 +1,3 @@
-import type Listener from '../Listener';
 import SettingsRepository, { SettingField } from '#structures/repositories/SettingsRepository';
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
@@ -6,12 +5,20 @@ import type { MessageReaction, User } from 'discord.js';
 import EmbedBuilder from '#structures/EmbedBuilder';
 import type ModTaskRepository from '#structures/repositories/ModTaskRepository';
 import { ModTask } from '#structures/entities/ModTask';
+import { ApplyOptions } from '@sapphire/decorators';
+import { Listener, ListenerOptions } from '@sapphire/framework';
+import { Events } from 'discord.js';
 
-export default class MessageReactionAdd implements Listener {
+@ApplyOptions<ListenerOptions>({
+    event: Events.MessageReactionAdd,
+})
+export default class extends Listener {
     private settingsRepository: SettingsRepository;
     private modTaskRepository: ModTaskRepository;
 
-    public constructor() {
+    public constructor(context: Listener.Context, options?: ListenerOptions) {
+        super(context, options);
+
         this.settingsRepository = new Database().em.getRepository(Settings);
         this.modTaskRepository = new Database().em.getRepository(ModTask);
     }
@@ -25,9 +32,10 @@ export default class MessageReactionAdd implements Listener {
             }
         }
 
-        const { client, message } = messageReaction;
+        const { client } = this.container;
+        const { message } = messageReaction;
         const isInGuild = message?.guildId && client.guilds.cache.has(message?.guildId);
-        const shouldListen = !user.bot && message.author?.id === client.user.id;
+        const shouldListen = !user.bot && message.author?.id === client.user!.id;
 
         if (!shouldListen || !isInGuild) {
             return;

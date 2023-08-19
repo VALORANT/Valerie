@@ -5,8 +5,8 @@ import type {
     TextBasedChannel,
     MessageCreateOptions
 } from 'discord.js';
-import { SlashCommandBuilder } from 'discord.js';
-import Command, { MultipleInteractionCommand } from '#structures/Command';
+import { MultipleInteractionCommand } from '#structures/types/Command';
+import { AliasPiece, Command, CommandOptions } from '@sapphire/framework';
 import InteractionUtil from '#root/util/InteractionUtil';
 import type SettingsRepository from '#structures/repositories/SettingsRepository';
 import { SettingField } from '#structures/repositories/SettingsRepository';
@@ -23,45 +23,16 @@ const EMERGENCY_REASONS: Record<EmergencyReasonKey, string> = {
     'vctroll': 'Voice Chat Violations',
 };
 
-export default class EmergencyCommand extends Command {
+export default class extends Command {
     private settingsRepository: SettingsRepository;
 
-    public constructor() {
-        super(
-            new SlashCommandBuilder()
-                .setName('emergency')
-                .setDescription('For situations that require the urgent attendance of moderators')
-                .setDMPermission(false)
-                .addStringOption(option => option
-                    .setName('reason')
-                    .setDescription('The reason for pinging all the moderators')
-                    .setRequired(true)
-                    .setChoices(
-                        ...Object.keys(EMERGENCY_REASONS).map((key: string) => {
-                            return { name: EMERGENCY_REASONS[key as EmergencyReasonKey], value: key };
-                        }),
-                        {
-                            name: 'Other',
-                            value: 'other',
-                        }
-                    )
-                )
-                .addUserOption(option => option
-                    .setName('user')
-                    .setDescription('The member you are reporting, in case you are not reporting a message')
-                    .setRequired(false)
-                )
-                .addStringOption(option => option
-                    .setName('message-link')
-                    .setDescription(`You can input a message link instead of a user, if it's more relevant`)
-                    .setRequired(false)
-                )
-        );
+    public constructor(context: AliasPiece.Context, options: CommandOptions) {
+        super(context, options);
 
         this.settingsRepository = new Database().em.getRepository(Settings);
     }
 
-    public async run(interaction: ChatInputCommandInteraction): Promise<void> {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.deferReply({ ephemeral: true });
 
         // eslint-disable-next-line max-len
@@ -97,6 +68,39 @@ export default class EmergencyCommand extends Command {
         const user = interaction.options.getUser('user') ?? message?.author;
 
         return this.doRun(interaction, interaction.options.getString('reason', true), user, message);
+    }
+
+    public override registerApplicationCommands(registry: Command.Registry) {
+        registry.registerChatInputCommand(command =>
+            command
+                .setName('emergency')
+                .setDescription('For situations that require the urgent attendance of moderators')
+                .setDMPermission(false)
+                .addStringOption(option => option
+                    .setName('reason')
+                    .setDescription('The reason for pinging all the moderators')
+                    .setRequired(true)
+                    .setChoices(
+                        ...Object.keys(EMERGENCY_REASONS).map((key: string) => {
+                            return { name: EMERGENCY_REASONS[key as EmergencyReasonKey], value: key };
+                        }),
+                        {
+                            name: 'Other',
+                            value: 'other',
+                        }
+                    )
+                )
+                .addUserOption(option => option
+                    .setName('user')
+                    .setDescription('The member you are reporting, in case you are not reporting a message')
+                    .setRequired(false)
+                )
+                .addStringOption(option => option
+                    .setName('message-link')
+                    .setDescription(`You can input a message link instead of a user, if it's more relevant`)
+                    .setRequired(false)
+                )
+        );
     }
 
     private async doRun(

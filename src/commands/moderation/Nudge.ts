@@ -1,8 +1,8 @@
 import type { ChatInputCommandInteraction, TextBasedChannel } from 'discord.js';
-import { ContextMenuCommandBuilder, SlashCommandBuilder, ApplicationCommandType } from 'discord.js';
+import { ApplicationCommandType } from 'discord.js';
 import type { MessageContextMenuCommandInteraction } from 'discord.js';
-import Command from '#structures/Command';
-import type { MultipleInteractionCommand } from '#structures/Command';
+import { Command } from '@sapphire/framework';
+import type { MultipleInteractionCommand } from '#structures/types/Command';
 import InteractionUtil from '#root/util/InteractionUtil';
 import EmbedBuilder from '#structures/EmbedBuilder';
 import { SettingField } from '#structures/repositories/SettingsRepository';
@@ -10,33 +10,18 @@ import type SettingsRepository from '#structures/repositories/SettingsRepository
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
 import type { GuildMessage } from '#structures/types/Message';
+import { AliasPiece, CommandOptions } from '@sapphire/framework';
 
 export default class NudgeCommand extends Command {
     private settingsRepository: SettingsRepository;
 
-    public constructor() {
-        super(
-            new SlashCommandBuilder()
-                .setName('nudge')
-                .setDescription('To give a reminder of the rules to a member in case they sent a message that infringes them')
-                .setDMPermission(false)
-                .setDefaultMemberPermissions(0)
-                .addStringOption(option => option
-                    .setName('message-link')
-                    .setDescription('The link to the message that infringes the rules')
-                    .setRequired(true)
-                ),
-            new ContextMenuCommandBuilder()
-                .setName('nudge')
-                .setDMPermission(false)
-                .setDefaultMemberPermissions(0)
-                .setType(ApplicationCommandType.Message)
-        );
+    public constructor(context: AliasPiece.Context, options: CommandOptions) {
+        super(context, options);
 
         this.settingsRepository = new Database().em.getRepository(Settings);
     }
 
-    public async run(interaction: ChatInputCommandInteraction): Promise<void> {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.deferReply({ ephemeral: true });
 
         // eslint-disable-next-line max-len
@@ -70,8 +55,31 @@ export default class NudgeCommand extends Command {
         return this.doRun(interaction, message);
     }
 
-    public contextMenuRun(interaction: MessageContextMenuCommandInteraction): Promise<void> {
+    public override contextMenuRun(interaction: MessageContextMenuCommandInteraction): Promise<void> {
         return this.doRun(interaction, interaction.targetMessage as GuildMessage);
+    }
+
+    public override registerApplicationCommands(registry: Command.Registry) {
+        registry.registerChatInputCommand(command =>
+            command
+                .setName('nudge')
+                .setDescription('To give a reminder of the rules to a member in case they sent a message that infringes them')
+                .setDMPermission(false)
+                .setDefaultMemberPermissions(0)
+                .addStringOption(option => option
+                    .setName('message-link')
+                    .setDescription('The link to the message that infringes the rules')
+                    .setRequired(true)
+                )
+        );
+
+        registry.registerContextMenuCommand(command =>
+            command
+                .setName('nudge')
+                .setDMPermission(false)
+                .setDefaultMemberPermissions(0)
+                .setType(ApplicationCommandType.Message)
+        );
     }
 
     private async doRun(interaction: MultipleInteractionCommand, message: GuildMessage): Promise<void> {

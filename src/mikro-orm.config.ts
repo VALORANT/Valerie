@@ -1,5 +1,6 @@
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { config as configureEnvironment } from 'dotenv';
+import { MigrationGenerator } from '#structures/MigrationGenerator';
 
 configureEnvironment({ path: '../.env' });
 
@@ -19,6 +20,7 @@ export default {
         collate: 'utf8mb4_general_ci',
     },
     migrations: {
+        generator: MigrationGenerator,
         path: '../dist/migrations',
         pathTs: '../src/migrations',
     },

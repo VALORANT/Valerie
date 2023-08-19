@@ -1,6 +1,5 @@
 import type { ChatInputCommandInteraction, TextBasedChannel } from 'discord.js';
-import { SlashCommandBuilder } from 'discord.js';
-import Command from '#structures/Command';
+import { AliasPiece, Command, CommandOptions } from '@sapphire/framework';
 import Logger from '@lilywonhalf/pretty-logger';
 import ModTaskRepository from '#structures/repositories/ModTaskRepository';
 import Database from '#root/setup/Database';
@@ -10,70 +9,18 @@ import { MINUTE, stringToTime } from '#root/util/DateTime';
 import SettingsRepository, { SettingField } from '#structures/repositories/SettingsRepository';
 import { Settings } from '#structures/entities/Settings';
 
-export default class ModTaskCommand extends Command {
+export default class extends Command {
     private settingsRepository: SettingsRepository;
     private modTaskRepository: ModTaskRepository;
 
-    public constructor() {
-        super(
-            new SlashCommandBuilder()
-                .setName('modtask')
-                .setDescription('Recurring moderation tasks to be posted in a dedicated channel')
-                .setDMPermission(false)
-                .setDefaultMemberPermissions(0)
-                .addSubcommand(input => input
-                    .setName('list')
-                    .setDescription('List existing moderation tasks')
-                )
-                .addSubcommand(input => input
-                    .setName('add')
-                    .setDescription('Add a moderation task')
-                    .addStringOption(option => option
-                        .setName('interval')
-                        .setDescription('Amount of time between each reminder (for example: 4h)')
-                        .setMinLength(2)
-                        .setRequired(true)
-                    )
-                    .addStringOption(option => option
-                        .setName('label')
-                        .setDescription('The description of the task')
-                        .setRequired(true)
-                    )
-                )
-                .addSubcommand(input => input
-                    .setName('edit')
-                    .setDescription('Modify a moderation task')
-                    .addIntegerOption(option => option
-                        .setName('id')
-                        .setDescription('Moderation task id')
-                        .setRequired(true)
-                    )
-                    .addStringOption(option => option
-                        .setName('interval')
-                        .setDescription('Amount of time between each reminder (for example: 4h)')
-                        .setMinLength(2)
-                    )
-                    .addStringOption(option => option
-                        .setName('label')
-                        .setDescription('The description of the task')
-                    )
-                )
-                .addSubcommand(input => input
-                    .setName('delete')
-                    .setDescription('Delete a moderation task')
-                    .addIntegerOption(option => option
-                        .setName('id')
-                        .setDescription('Moderation task id')
-                        .setRequired(true)
-                    )
-                )
-        );
+    public constructor(context: AliasPiece.Context, options: CommandOptions) {
+        super(context, options);
 
         this.settingsRepository = new Database().em.getRepository(Settings);
         this.modTaskRepository = new Database().em.getRepository(ModTask);
     }
 
-    public async run(interaction: ChatInputCommandInteraction): Promise<void> {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.deferReply();
 
         const interval = interaction.options.getString('interval');
@@ -126,7 +73,63 @@ export default class ModTaskCommand extends Command {
         }
     }
 
-    public async runList(interaction: ChatInputCommandInteraction): Promise<void> {
+    public override registerApplicationCommands(registry: Command.Registry) {
+        registry.registerChatInputCommand(command =>
+            command
+                .setName('modtask')
+                .setDescription('Recurring moderation tasks to be posted in a dedicated channel')
+                .setDMPermission(false)
+                .setDefaultMemberPermissions(0)
+                .addSubcommand(input => input
+                    .setName('list')
+                    .setDescription('List existing moderation tasks')
+                )
+                .addSubcommand(input => input
+                    .setName('add')
+                    .setDescription('Add a moderation task')
+                    .addStringOption(option => option
+                        .setName('interval')
+                        .setDescription('Amount of time between each reminder (for example: 4h)')
+                        .setMinLength(2)
+                        .setRequired(true)
+                    )
+                    .addStringOption(option => option
+                        .setName('label')
+                        .setDescription('The description of the task')
+                        .setRequired(true)
+                    )
+                )
+                .addSubcommand(input => input
+                    .setName('edit')
+                    .setDescription('Modify a moderation task')
+                    .addIntegerOption(option => option
+                        .setName('id')
+                        .setDescription('Moderation task id')
+                        .setRequired(true)
+                    )
+                    .addStringOption(option => option
+                        .setName('interval')
+                        .setDescription('Amount of time between each reminder (for example: 4h)')
+                        .setMinLength(2)
+                    )
+                    .addStringOption(option => option
+                        .setName('label')
+                        .setDescription('The description of the task')
+                    )
+                )
+                .addSubcommand(input => input
+                    .setName('delete')
+                    .setDescription('Delete a moderation task')
+                    .addIntegerOption(option => option
+                        .setName('id')
+                        .setDescription('Moderation task id')
+                        .setRequired(true)
+                    )
+                )
+        );
+    }
+
+    private async runList(interaction: ChatInputCommandInteraction): Promise<void> {
         const tasks = await this.modTaskRepository.getByGuild(interaction.guild!.id);
 
         if (!tasks || tasks.length < 1) {
@@ -152,7 +155,7 @@ export default class ModTaskCommand extends Command {
         });
     }
 
-    public async runAdd(interaction: ChatInputCommandInteraction, channel: TextBasedChannel): Promise<void> {
+    private async runAdd(interaction: ChatInputCommandInteraction, channel: TextBasedChannel): Promise<void> {
         const task = new ModTask();
 
         task.guild = interaction.guild!.id;
@@ -171,7 +174,7 @@ export default class ModTaskCommand extends Command {
         });
     }
 
-    public async runEdit(interaction: ChatInputCommandInteraction, channel: TextBasedChannel): Promise<void> {
+    private async runEdit(interaction: ChatInputCommandInteraction, channel: TextBasedChannel): Promise<void> {
         const id = interaction.options.getInteger('id', true);
         const interval = interaction.options.getString('interval');
         const label = interaction.options.getString('label');
@@ -206,7 +209,7 @@ export default class ModTaskCommand extends Command {
         });
     }
 
-    public async runDelete(interaction: ChatInputCommandInteraction, channel: TextBasedChannel): Promise<void> {
+    private async runDelete(interaction: ChatInputCommandInteraction, channel: TextBasedChannel): Promise<void> {
         const id = interaction.options.getInteger('id', true);
         const task = await this.modTaskRepository.getById(id);
 
