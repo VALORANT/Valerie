@@ -1,8 +1,8 @@
 import type { ChatInputCommandInteraction, SharedSlashCommandOptions } from 'discord.js';
 import { wrap } from '@mikro-orm/core';
 import Logger from '@lilywonhalf/pretty-logger';
-import { AliasPiece, Command } from '@sapphire/framework';
-import type { CommandOptions } from '@sapphire/framework';
+import { Command } from '@sapphire/framework';
+import type { AliasPiece, CommandOptions } from '@sapphire/framework';
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
 import EmbedBuilder from '#structures/EmbedBuilder';

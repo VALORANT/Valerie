@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
 import Logger from '@lilywonhalf/pretty-logger';
 import { Command } from '@sapphire/framework';
 import EmbedBuilder from '#structures/EmbedBuilder';
@@ -10,7 +10,7 @@ export default class extends Command {
                 .setTitle('Unauthorized')
                 .setDescription('You do not have the right to execute this command.');
 
-            await interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed], ephemeral: true });
 
             return;
         }
