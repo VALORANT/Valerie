@@ -3,7 +3,7 @@ import type {
     User,
     Snowflake,
     TextBasedChannel,
-    MessageCreateOptions
+    MessageCreateOptions, UserContextMenuCommandInteraction
 } from 'discord.js';
 import { MultipleInteractionCommand } from '#structures/types/Command';
 import { AliasPiece, Command, CommandOptions } from '@sapphire/framework';
@@ -13,6 +13,12 @@ import { SettingField } from '#structures/repositories/SettingsRepository';
 import Database from '#root/setup/Database';
 import { Settings } from '#structures/entities/Settings';
 import type { GuildMessage } from '#structures/types/Message';
+import {
+    ApplicationCommandType,
+    MessageContextMenuCommandInteraction,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder
+} from 'discord.js';
 
 type EmergencyReasonKey = 'hate' | 'spam' | 'nsfw' | 'vctroll';
 
@@ -70,6 +76,35 @@ export default class extends Command {
         return this.doRun(interaction, interaction.options.getString('reason', true), user, message);
     }
 
+    public override async contextMenuRun(
+        interaction: MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction
+    ): Promise<void> {
+        const messageInteraction = interaction as MessageContextMenuCommandInteraction;
+        const userInteraction = interaction as UserContextMenuCommandInteraction;
+
+        const message = messageInteraction.targetMessage ? messageInteraction.targetMessage as GuildMessage : null;
+        const user = message ? message.author : userInteraction.targetUser;
+        const dropdown = new StringSelectMenuBuilder()
+            .setCustomId(`emergency-${user.id}-dropdown-${Date.now()}`)
+            .setPlaceholder('Select a reason')
+            .setOptions(Object.keys(EMERGENCY_REASONS).map((key: string) => {
+                return new StringSelectMenuOptionBuilder()
+                    .setLabel(key)
+                    .setValue(key)
+                    .setDescription(EMERGENCY_REASONS[key as EmergencyReasonKey]);
+            }));
+        const { responsePromise } = await InteractionUtil.askForSelection(
+            interaction,
+            { content: 'Please select an emergency reason:', ephemeral: true },
+            dropdown,
+            { timeoutIsReject: false }
+        );
+        const reasonArray = await responsePromise;
+        const reason = reasonArray.length > 0 ? reasonArray[0] : 'other';
+
+        return this.doRun(interaction, reason, user, message);
+    }
+
     public override registerApplicationCommands(registry: Command.Registry) {
         registry.registerChatInputCommand(command =>
             command
@@ -100,6 +135,20 @@ export default class extends Command {
                     .setDescription(`You can input a message link instead of a user, if it's more relevant`)
                     .setRequired(false)
                 )
+        );
+
+        registry.registerContextMenuCommand(command =>
+            command
+                .setName('emergency')
+                .setDMPermission(false)
+                .setType(ApplicationCommandType.Message)
+        );
+
+        registry.registerContextMenuCommand(command =>
+            command
+                .setName('emergency')
+                .setDMPermission(false)
+                .setType(ApplicationCommandType.User)
         );
     }
 
