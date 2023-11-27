@@ -2,6 +2,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import ModTaskRepository from '#structures/repositories/ModTaskRepository';
 import { Message, TextBasedChannel } from 'discord.js';
 import EmbedBuilder from '#structures/EmbedBuilder';
+import { datetimeToString } from '#root/util/DateTime';
 
 const triggerCountColourMap: Record<number, number> = {
     1: 0x2aff2a,
@@ -40,7 +41,7 @@ export class ModTask {
         const message = await channel.send({ embeds: [embed] });
         const reactionEmoji = channel.client.emojis.cache.find(emoji => emoji.name === 'Check')?.id ?? '✅'
 
-        await message.react(reactionEmoji)
+        await message.react(reactionEmoji);
 
         this.messageId = message.id;
 
@@ -66,6 +67,7 @@ export class ModTask {
         return new EmbedBuilder()
             .setTitle(`Moderation task #${task.id}`)
             .setDescription(task.label)
-            .setColor(triggerCountColourMap[task.triggerCount > 2 ? 3 : task.triggerCount]);
+            .setColor(triggerCountColourMap[task.triggerCount > 2 ? 3 : task.triggerCount])
+            .setFooter({ text: `Last trigger: ${task.lastTrigger ? datetimeToString(task.lastTrigger) : 'Never'}` });
     }
 }
