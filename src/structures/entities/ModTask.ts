@@ -39,7 +39,7 @@ export class ModTask {
 
         const embed = ModTask.getTaskEmbed(this);
         const message = await channel.send({ embeds: [embed] });
-        const reactionEmoji = channel.client.emojis.cache.find(emoji => emoji.name === 'Check')?.id ?? '✅'
+        const reactionEmoji = channel.client.emojis.cache.get('1180183931316875325')?.id ?? '✅'
 
         await message.react(reactionEmoji);
 
