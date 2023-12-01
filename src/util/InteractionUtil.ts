@@ -33,9 +33,10 @@ export default class InteractionUtil {
         interaction: RepliableInteraction,
         embedData: EmbedData | APIEmbed,
         error = false,
-        ephemeral = true
+        ephemeral = true,
+        components = []
     ): Promise<InteractionResponse | Message> {
-        const options = { content: '', embeds: [new EmbedBuilder(error, embedData)], components: [] };
+        const options = { content: '', embeds: [new EmbedBuilder(error, embedData)], components };
 
         return interaction.replied || interaction.deferred
             ? interaction.editReply(options)

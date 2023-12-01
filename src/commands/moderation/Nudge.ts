@@ -1,5 +1,6 @@
+import { ButtonBuilder } from 'discord.js';
 import type { ChatInputCommandInteraction, TextBasedChannel } from 'discord.js';
-import { ApplicationCommandType } from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, ButtonStyle } from 'discord.js';
 import type { MessageContextMenuCommandInteraction } from 'discord.js';
 import { Command } from '@sapphire/framework';
 import type { MultipleInteractionCommand } from '#structures/types/Command';
@@ -97,8 +98,6 @@ export default class NudgeCommand extends Command {
                 **A message you posted in the ${guild.name} server has caught the attention of moderators.**
 
                 While this is not a violation, please be mindful of our rules and help us in keeping this community safe and welcome!
-
-                [Click here to go to your message.](${messageLink})
             `)
             .setColor(0xff4655);
 
@@ -111,7 +110,11 @@ export default class NudgeCommand extends Command {
             return;
         }
 
-        await member.send({ embeds: [embed] }).then(async () => {
+        await member.send({ embeds: [embed], components: [
+            new ActionRowBuilder<ButtonBuilder>().addComponents([
+                new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(messageLink).setLabel('Jump to your message.'),
+            ]),
+        ] }).then(async () => {
             await InteractionUtil.reply(interaction, {
                 title: `Success`,
                 description: `The nudge has been sent to the user in DMs.`,
