@@ -88,8 +88,11 @@ export default class NudgeCommand extends Command {
         const member = await guild.members.fetch(user.id).catch(() => null);
         const logsChannelId = await this.settingsRepository.getGuildSetting(guild.id, SettingField.LogsChannel);
         const logsChannel = logsChannelId ? guild.channels.cache.get(logsChannelId) : null;
+        const moderationRoleId = await this.settingsRepository.getGuildSetting(guild.id, SettingField.EmergencyRole);
+        const moderationRole = moderationRoleId ? guild.roles.cache.get(moderationRoleId) : null;
+        const authorIcon = moderationRole && moderationRole.iconURL() ? moderationRole.iconURL() : guild.iconURL();
         const embed = new EmbedBuilder()
-            .setAuthor({ iconURL: guild.iconURL() ?? undefined, name: `The moderation team` })
+            .setAuthor({ iconURL: authorIcon ?? undefined, name: `The ${guild.name} moderation team` })
             .setDescription(`
                 **A message you posted in the ${guild.name} server has caught the attention of moderators.**
 
@@ -97,7 +100,7 @@ export default class NudgeCommand extends Command {
 
                 [Click here to go to your message.](${messageLink})
             `)
-            .setColor(0xff942a);
+            .setColor(0xff4655);
 
         if (!member) {
             await InteractionUtil.reply(interaction, {
