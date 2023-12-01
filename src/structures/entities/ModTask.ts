@@ -5,9 +5,9 @@ import EmbedBuilder from '#structures/EmbedBuilder';
 import { datetimeToString } from '#root/util/DateTime';
 
 const triggerCountColourMap: Record<number, number> = {
-    1: 0x2aff2a,
-    2: 0xff942a,
-    3: 0xff2a2a,
+    1: 0x4bc271,
+    2: 0xf37f3e,
+    3: 0xfc3e5c,
 };
 
 @Entity({ customRepository: () => ModTaskRepository })
