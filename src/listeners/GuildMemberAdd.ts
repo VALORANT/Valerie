@@ -37,6 +37,7 @@ export default class extends Listener {
 
         if (isWhitelisted) {
             Logger.info(`${member.user.tag} (${member.id}) is whitelisted.`);
+            Logger.debug(isWhitelisted);
 
             return;
         }

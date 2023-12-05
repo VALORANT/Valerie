@@ -100,6 +100,7 @@ export default class extends Command {
                 userId: id,
                 guildId: interaction.guildId,
                 whitelistedBy: interaction.user.id,
+                createdOn: new Date(),
             } as RequiredEntityData<WhitelistedUser>;
         });
 
