@@ -36,9 +36,12 @@ export default class extends Listener {
         const isWhitelisted = await this.whitelistedUserRepository.findOne({ userId, guildId });
 
         if (isWhitelisted) {
+            Logger.info(`${member.user.tag} (${member.id}) is whitelisted.`);
+
             return;
         }
 
+        Logger.info(`${member.user.tag} (${member.id}) is not whitelisted, kicking.`);
         await member.kick('Member is not whitelisted.').catch(Logger.error);
     }
 }
