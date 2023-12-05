@@ -12,7 +12,7 @@ import type {
     APIEmbed,
     EmbedData,
     MessageEditOptions,
-    ComponentEmojiResolvable
+    ComponentEmojiResolvable, SlashCommandStringOption
 } from 'discord.js';
 import EmbedBuilder from '#structures/EmbedBuilder';
 import {
@@ -160,6 +160,14 @@ export default class InteractionUtil {
         });
 
         return { message, responsePromise };
+    }
+
+    public static snowflakeOption(
+        option: SlashCommandStringOption,
+        name: string,
+        description: string
+    ): SlashCommandStringOption {
+        return option.setName(name).setDescription(description).setRequired(true).setMinLength(16).setMaxLength(19);
     }
 }
 

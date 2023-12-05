@@ -15,7 +15,8 @@ type ChoiceName =
     'emergency-role' |
     'vc-mod-role' |
     'emergency-channel' |
-    'modmail-bot';
+    'modmail-bot' |
+    'whitelist-enabled';
 
 type MentionPrefix = '#' | '@' | '@&';
 
@@ -72,6 +73,12 @@ const SETTINGS: Record<SettingField, SettingData> = {
         description: 'The modmail bot Discord account',
         method: 'addUserOption',
         mention: '@',
+    },
+    [SettingField.WhitelistEnabled]: {
+        title: 'Enable whitelist',
+        choice: 'whitelist-enabled',
+        description: 'To either enable or disable the user whitelist on this server',
+        method: 'addBooleanOption',
     },
 };
 
@@ -179,8 +186,7 @@ export default class extends Command {
             }
 
             setting.value = value;
-            await this.settingsRepository.persist(setting).flush();
-            await new Database().em.clearCache(`setting_${guild}_${key}`);
+            await new Database().em.persist(setting).flush();
         }
 
         await interaction.reply({ content: 'The setting has been updated successfully!', ephemeral: true });
