@@ -29,5 +29,6 @@ export default class extends Listener {
 
         Logger.info(`${member.user.tag} (${member.id}) was removed from the whitelist.`);
         await this.whitelistedUserRepository.getEntityManager().removeAndFlush(whitelistedUser);
+        this.whitelistedUserRepository.getEntityManager().clear();
     }
 }

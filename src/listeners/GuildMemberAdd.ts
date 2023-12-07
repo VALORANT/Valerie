@@ -33,6 +33,8 @@ export default class extends Listener {
             return;
         }
 
+        this.whitelistedUserRepository.getEntityManager().clear();
+
         const isWhitelisted = await this.whitelistedUserRepository.findOne({ userId, guildId });
 
         if (isWhitelisted) {
