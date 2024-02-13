@@ -45,8 +45,8 @@ export default class extends Listener {
         const guild = client.guilds.cache.get(guildId!)!;
         const channelId = await this.settingsRepository.getGuildSetting(guild.id, SettingField.ModTasksChannel);
         const channel = channelId ? guild.channels.cache.get(channelId) : null;
-        const rightEmoji = messageReaction.emoji.name && ['check', 'utilcheck', 'utilcheckbox', '✅'].includes(
-            messageReaction.emoji.name.toLowerCase()
+        const rightEmoji = messageReaction.emoji.name && ['check', '✅'].some(name =>
+            messageReaction.emoji.name?.toLowerCase().includes(name.toLowerCase())
         );
 
         if (!channel || message.channelId !== channelId || !rightEmoji) {
