@@ -6,7 +6,7 @@ import { datetimeToString } from '#root/util/DateTime';
 
 const triggerCountColourMap: Record<number, number> = {
     1: 0x4bc271,
-    2: 0xf37f3e,
+    2: 0xf3693e,
     3: 0xfc3e5c,
 };
 
