@@ -19,15 +19,20 @@ import {
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder
 } from 'discord.js';
+import { CooldownManager } from '#structures/managers/CooldownManager';
+import { MINUTE } from '#root/util/DateTime';
 
-type EmergencyReasonKey = 'hate' | 'spam' | 'nsfw' | 'vctroll';
+type EmergencyReasonKey = 'hate' | 'spam' | 'nsfw' | 'voice';
 
 const EMERGENCY_REASONS: Record<EmergencyReasonKey, string> = {
     'hate': 'Racism/Hate Speech',
     'spam': 'Excessive Spam',
     'nsfw': 'NSFW Profile/Text',
-    'vctroll': 'Voice Chat Violations',
+    'voice': 'Voice Chat Violations',
 };
+
+const COOLDOWN_KEY = 'command_emergency';
+const COOLDOWN_DURATION = MINUTE;
 
 export default class extends Command {
     private settingsRepository: SettingsRepository;
@@ -165,7 +170,7 @@ export default class extends Command {
             'hate': emergencyRoleId!,
             'spam': emergencyRoleId!,
             'nsfw': emergencyRoleId!,
-            'vctroll': vcModeratorRoleId!,
+            'voice': vcModeratorRoleId!,
         };
 
         return reason in reasonRoleMap
@@ -180,6 +185,19 @@ export default class extends Command {
         emergencyRoleId: Snowflake,
         message: GuildMessage | null
     ): Promise<void> {
+        const cooldownManager = new CooldownManager();
+
+        if (cooldownManager.isOnCooldown(COOLDOWN_KEY)) {
+            await InteractionUtil.reply(interaction, {
+                title: 'On cooldown',
+                description: `The emergency command was used very recently. Please do not try to ping multiple times for the same problem.`,
+            }, true);
+
+            return;
+        }
+
+        cooldownManager.setCooldown(COOLDOWN_KEY, COOLDOWN_DURATION);
+
         const { guild } = interaction;
         const pinger = interaction.user;
         const userName = user ? `${user}, ${user.tag}, ${user.id}` : null;
