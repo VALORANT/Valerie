@@ -187,7 +187,7 @@ export default class extends Command {
     ): Promise<void> {
         const cooldownManager = new CooldownManager();
 
-        if (cooldownManager.isOnCooldown(COOLDOWN_KEY)) {
+        if (cooldownManager.isOnCooldown(`${COOLDOWN_KEY}-${interaction.guild!.id}`)) {
             await InteractionUtil.reply(interaction, {
                 title: 'On cooldown',
                 description: `The emergency command was used very recently. Please do not try to ping multiple times for the same problem.`,
@@ -196,7 +196,7 @@ export default class extends Command {
             return;
         }
 
-        cooldownManager.setCooldown(COOLDOWN_KEY, COOLDOWN_DURATION);
+        cooldownManager.setCooldown(`${COOLDOWN_KEY}-${interaction.guild!.id}`, COOLDOWN_DURATION);
 
         const { guild } = interaction;
         const pinger = interaction.user;
