@@ -206,10 +206,11 @@ export default class extends Command {
             guild!.id,
             SettingField.EmergencyChannel
         );
+        const firstLine = `**🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**`;
+        const firstLineAnonymous = `**🚨 The emergency command was used**`;
         const emergencyChannel = guild!.channels.cache.get(emergencyChannelId!) as TextBasedChannel;
         const emergencyInfoMessage: MessageCreateOptions = {
-            content: `**🚨 The emergency command was used by: ${pinger} (${pinger.tag}, ${pinger.id})**` +
-                `\n**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}` +
+            content: `\n**Reason:** ${EMERGENCY_REASONS[reason as EmergencyReasonKey]}` +
                 (user ? `\n**Reported user:** ${userName}` : '') +
                 `\n**Channel:** <#${interaction.channel!.id}>` +
                 (message ? `\n**Reported message:** ${message.url}` : '') +
@@ -220,18 +221,17 @@ export default class extends Command {
             emergencyInfoMessage.reply = { messageReference: message, failIfNotExists: false };
         }
 
-        emergencyInfoMessage.content = `<@&${emergencyRoleId}>\n${emergencyInfoMessage.content}`;
-
-        const emergencyMessage = await interaction.channel!.send(emergencyInfoMessage);
-        const emergencyInfoMessageLines = emergencyInfoMessage.content.split('\n');
+        const emergencyMessage = await interaction.channel!.send({
+            ...emergencyInfoMessage,
+            content: `<@&${emergencyRoleId}>\n${firstLineAnonymous}\n${emergencyInfoMessage.content}`,
+        });
 
         delete emergencyInfoMessage.reply;
 
-        emergencyInfoMessageLines.shift();
-        emergencyInfoMessageLines.unshift(emergencyMessage.url);
-        emergencyInfoMessage.content = emergencyInfoMessageLines.join('\n');
-
-        await emergencyChannel.send(emergencyInfoMessage);
+        await emergencyChannel.send({
+            ...emergencyInfoMessage,
+            content: `${emergencyMessage.url}\n${firstLine}\n${emergencyInfoMessage.content}`,
+        });
 
         await InteractionUtil.reply(interaction, {
             title: 'Emergency team pinged',
